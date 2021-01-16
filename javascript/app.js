@@ -1,29 +1,38 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 const mysql = require('mysql');
 
+//#region expressでWebサーバーの設定
+
 // expressで4000ポートにサーバー起動
 const server = app.listen(4000, function(){
-    console.log("Node.js is listening to PORT:" + server.address().port);
+  console.log("Node.js is listening to PORT:" + server.address().port);
 });
 
 // expressの設定 (cors method header 許可の設定)
 app.disable('x-powered-by');
-app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, access_token'
-  );
-  if ('OPTIONS' === req.method) {
-    res.send(200);
-  } else {
-    next();
-  }
-});
+app.use(cors()).use(bodyParser.json());
+
+// cors を使用せず手動設定知ると以下のような感じになる
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Content-Type, Authorization, access_token'
+//   );
+//   if ('OPTIONS' === req.method) {
+//     res.send(200);
+//   } else {
+//     next();
+//   }
+// });
+
+//#endregion
+
+//#region mysqlに接続
 
 // mysqlに接続
 const connection = mysql.createConnection({
@@ -38,6 +47,11 @@ connection.connect((err) => {
   if (err) throw err;
   console.log('connected');
 });
+
+//#endregion
+
+
+//#region APIのエンドポイント(APIに接続するためのURL)を設定
 
 // todoすべてを取得する
 app.get("/api/todos", (req, res, next) => {
@@ -88,3 +102,5 @@ app.delete("/api/todos/:id", (req, res, next) => {
     res.status(204).send();
   });
 });
+
+//#endregion
