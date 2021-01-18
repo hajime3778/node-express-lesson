@@ -57,5 +57,6 @@ connection.connect((err) => {
 const todoRepository = new TodoRepository(connection);
 const todoService = new TodoService(todoRepository);
 const todoController = new TodoController(todoService);
+//todoController.create();
 
-app.use('/api/', todoController.createRouter);
+app.use('/api/', todoController.router);

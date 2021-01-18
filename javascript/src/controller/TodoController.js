@@ -7,12 +7,6 @@ const { Router } = require('express');
 const TodoController = function(todoService) {
   this.todoService = todoService;
   this.router = Router();
-}
-
-/**
- * TodoAPIのエンドポイントを作成
- */
-TodoController.prototype.createRouter = function() {
 
   // todoすべてを取得する
   this.router.get('/todos', async (req, res) => {
@@ -46,7 +40,7 @@ TodoController.prototype.createRouter = function() {
 
   // todo1件を更新する
   this.router.put('/todos/:id', async (req, res) => {
-    await this.todoService.update(req.body).catch((err) => {
+    await this.todoService.update(req.params.id, req.body).catch((err) => {
       console.log(err);
       res.status(400).send(err);
       return;
@@ -63,6 +57,6 @@ TodoController.prototype.createRouter = function() {
     });
     res.status(204).send();
   });
-};
+}
 
 module.exports = TodoController;
