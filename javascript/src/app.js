@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const mysql = require('mysql');
+const TodoRepository = require("./repository/TodoRepository");
+const TodoService = require("./service/TodoService");
+const TodoController = require("./controller/TodoController");
 
 //#region expressでWebサーバーの設定
 
@@ -50,56 +53,9 @@ connection.connect((err) => {
 
 //#endregion
 
-//#region APIのエンドポイント(APIに接続するためのURL)を設定
+// TodoAPI
+const todoRepository = new TodoRepository(connection);
+const todoService = new TodoService(todoRepository);
+const todoController = new TodoController(todoService);
 
-// todoすべてを取得する
-app.get("/api/todos", (req, res, next) => {
-  const sql = 'select * from todos';
-  connection.query(sql, (err, results) => {
-    if (err) throw err;
-    res.json(results);
-  });
-});
-
-// todo1件を取得する
-app.get("/api/todos/:id", (req, res, next) => {
-  const id = req.params.id;
-  const sql = 'select * from todos where ?';
-  connection.query(sql, {id: id}, (err, results) => {
-    if (err) throw err;
-    res.json(results[0]);
-  });
-});
-
-// todo1件を作成する
-app.post("/api/todos", (req, res, next) => {
-  const todo = req.body;
-  const sql = 'insert into todos set ?';
-  connection.query(sql, todo, (err, result) => {
-    if (err) throw err;
-    res.status(201).json(result.id);
-  });
-});
-
-// todo1件を更新する
-app.put("/api/todos/:id", (req, res, next) => {
-  const id = req.params.id;
-  const todo = req.body;
-  const sql = 'update todos set ? where ?';
-  connection.query(sql, [todo, {id: id}], (err, result) => {
-    if (err) throw err;
-    res.status(200).send();
-  });
-});
-
-// todo1件を削除する
-app.delete("/api/todos/:id", (req, res, next) => {
-  const id = req.params.id;
-  const sql = 'delete from todos where ?';
-  connection.query(sql, {id: id}, (err, results) => {
-    if (err) throw err;
-    res.status(204).send();
-  });
-});
-
-//#endregion
+app.use('/api/', todoController.createRouter);
