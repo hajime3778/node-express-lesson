@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const Todo = require('../model/Todo');
 
 /**
  * TodoAPIのエンドポイント(APIに接続するためのURL)の設定を行う
@@ -30,7 +31,8 @@ const TodoController = function(todoService) {
 
   // todo1件を作成する
   this.router.post('/todos', async (req, res) => {
-    const results = await this.todoService.create(req.body).catch((err) => {
+    const todo = new Todo(0, req.body.title, req.body.description);
+    const results = await this.todoService.create(todo).catch((err) => {
       console.log(err);
       res.status(400).send(err);
       return;
@@ -40,7 +42,8 @@ const TodoController = function(todoService) {
 
   // todo1件を更新する
   this.router.put('/todos/:id', async (req, res) => {
-    await this.todoService.update(req.params.id, req.body).catch((err) => {
+    const todo = new Todo(parseInt(req.params.id), req.body.title, req.body.description);
+    await this.todoService.update(todo).catch((err) => {
       console.log(err);
       res.status(400).send(err);
       return;

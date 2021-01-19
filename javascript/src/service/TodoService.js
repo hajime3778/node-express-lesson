@@ -19,8 +19,8 @@ TodoService.prototype.create = async function(todo) {
   return await this.todoRepository.create(todo);
 }
 
-TodoService.prototype.update = async function(id, todo) {
-  return await this.todoRepository.update(id, todo);
+TodoService.prototype.update = async function(todo) {
+  return await this.todoRepository.update(todo);
 }
 
 TodoService.prototype.delete = async function(id) {
