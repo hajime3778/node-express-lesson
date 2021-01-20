@@ -1,6 +1,6 @@
-import { Todo } from '../model/Todo';
+import { Todo } from '../model/Todo'
 
-export interface TodoRepository { 
+export interface TodoService {
   getAll(): Promise<Todo[]>;
   get(id: number): Promise<Todo>;
   create(todo: Todo): Promise<string>;

@@ -3,7 +3,8 @@ import mysql from 'mysql';
 import { AddressInfo } from 'net';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { TodoRepository } from './repository/TodoRepository';
+import { TodoRepositoryImpl } from './repository/impl/TodoRepositoryImpl';
+import { TodoServiceImpl } from './service/impl/TodoServiceImpl';
 import { Todo } from './model/Todo';
 
 
@@ -58,25 +59,26 @@ connection.connect((err) => {
 
 //#region APIのエンドポイント(APIに接続するためのURL)を設定
 
-const todoRepository = new TodoRepository(connection);
+const todoRepository = new TodoRepositoryImpl(connection);
+const todoService = new TodoServiceImpl(todoRepository);
 
 // todoすべてを取得する
 app.get("/api/todos", async (req: Request, res: Response, next: NextFunction) => {
-  const todos = await todoRepository.getAll();
+  const todos = await todoService.getAll();
   res.json(todos);
 });
 
 // todo1件を取得する
 app.get("/api/todos/:id", async (req: Request, res: Response, next: NextFunction) => {
   const id: number = parseInt(req.params.id);
-  const todo = await todoRepository.get(id);
+  const todo = await todoService.get(id);
   res.json(todo);
 });
 
 // todo1件を作成する
 app.post("/api/todos", async (req: Request, res: Response, next: NextFunction) => {
   const todo: Todo = req.body;
-  const id = await todoRepository.create(todo);
+  const id = await todoService.create(todo);
   res.status(201).json(id);
 });
 
@@ -85,14 +87,14 @@ app.put("/api/todos/:id", async (req: Request, res: Response, next: NextFunction
   const id: number = parseInt(req.params.id);
   const todo: Todo = req.body;
   todo.id = id;
-  await todoRepository.update(todo);
+  await todoService.update(todo);
   res.status(200).send();
 });
 
 // todo1件を削除する
 app.delete("/api/todos/:id", async (req: Request, res: Response, next: NextFunction) => {
   const id: number = parseInt(req.params.id);
-  await todoRepository.delete(id);
+  await todoService.delete(id);
   res.status(204).send();
 });
 
