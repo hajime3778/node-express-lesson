@@ -2,7 +2,10 @@ import express, { Request, Response, NextFunction } from 'express';
 import mysql from 'mysql';
 import { AddressInfo } from 'net';
 import bodyParser from 'body-parser';
-import cors from 'cors'
+import cors from 'cors';
+import { TodoRepository } from './repository/TodoRepository';
+import { Todo } from './model/Todo';
+
 
 const app = express();
 
@@ -55,54 +58,42 @@ connection.connect((err) => {
 
 //#region APIのエンドポイント(APIに接続するためのURL)を設定
 
+const todoRepository = new TodoRepository(connection);
+
 // todoすべてを取得する
-app.get("/api/todos", (req: Request, res: Response, next: NextFunction) => {
-  const sql = 'select * from todos';
-  connection.query(sql, (err, results) => {
-    if (err) throw err;
-    res.json(results);
-  });
+app.get("/api/todos", async (req: Request, res: Response, next: NextFunction) => {
+  const todos = await todoRepository.getAll();
+  res.json(todos);
 });
 
 // todo1件を取得する
-app.get("/api/todos/:id", (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  const sql = 'select * from todos where ?';
-  connection.query(sql, {id: id}, (err, results) => {
-    if (err) throw err;
-    res.json(results[0]);
-  });
+app.get("/api/todos/:id", async (req: Request, res: Response, next: NextFunction) => {
+  const id: number = parseInt(req.params.id);
+  const todo = await todoRepository.get(id);
+  res.json(todo);
 });
 
 // todo1件を作成する
-app.post("/api/todos", (req: Request, res: Response, next: NextFunction) => {
-  const todo = req.body;
-  const sql = 'insert into todos set ?';
-  connection.query(sql, todo, (err, result) => {
-    if (err) throw err;
-    res.status(201).json(result.id);
-  });
+app.post("/api/todos", async (req: Request, res: Response, next: NextFunction) => {
+  const todo: Todo = req.body;
+  const id = await todoRepository.create(todo);
+  res.status(201).json(id);
 });
 
 // todo1件を更新する
-app.put("/api/todos/:id", (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  const todo = req.body;
-  const sql = 'update todos set ? where ?';
-  connection.query(sql, [todo, {id: id}], (err) => {
-    if (err) throw err;
-    res.status(200).send();
-  });
+app.put("/api/todos/:id", async (req: Request, res: Response, next: NextFunction) => {
+  const id: number = parseInt(req.params.id);
+  const todo: Todo = req.body;
+  todo.id = id;
+  await todoRepository.update(todo);
+  res.status(200).send();
 });
 
 // todo1件を削除する
-app.delete("/api/todos/:id", (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  const sql = 'delete from todos where ?';
-  connection.query(sql, {id: id}, (err) => {
-    if (err) throw err;
-    res.status(204).send();
-  });
+app.delete("/api/todos/:id", async (req: Request, res: Response, next: NextFunction) => {
+  const id: number = parseInt(req.params.id);
+  await todoRepository.delete(id);
+  res.status(204).send();
 });
 
 //#endregion
