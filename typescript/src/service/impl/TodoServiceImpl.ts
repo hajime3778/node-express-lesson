@@ -2,7 +2,7 @@ import { Todo } from '../../model/Todo'
 import { TodoRepository } from '../../repository/TodoRepository'
 
 export class TodoServiceImpl { 
-  todoRepository: TodoRepository;
+  private todoRepository: TodoRepository;
 
   /**
    * 初期化

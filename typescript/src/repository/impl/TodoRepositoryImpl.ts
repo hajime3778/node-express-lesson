@@ -3,7 +3,7 @@ import { Todo } from '../../model/Todo';
 
 /** Todoのデータベース操作を行う */
 export class TodoRepositoryImpl { 
-  connection: Connection;
+  private connection: Connection;
 
   /**
    * 初期化
