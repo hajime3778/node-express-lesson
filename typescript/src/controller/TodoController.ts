@@ -42,7 +42,8 @@ export class TodoController {
         res.status(500).send(err);
         return;
       });
-      res.status(201).send(result);
+      console.log(result);
+      res.status(201).json(result);
     });
 
     // todo1件を更新する

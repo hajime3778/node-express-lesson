@@ -64,7 +64,7 @@ export class TodoRepositoryImpl {
     const sql = 'insert into todos set ?';
     return new Promise<string>((resolve, reject) => { 
       this.connection.query(sql, todo, (err, result) => {
-        return err ? reject(err.message) : resolve(result.insertedId);
+        return err ? reject(err.message) : resolve(result.insertId);
       });
     });
   }
