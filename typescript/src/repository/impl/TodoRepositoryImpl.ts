@@ -21,6 +21,7 @@ export class TodoRepositoryImpl {
     const sql = 'select * from todos';
     return new Promise<Todo[]>((resolve, reject) => {
       this.connection.query(sql, (err, results) => {
+        if (err) return reject(err.message);
         const todos = results.map((todo: Todo) => { 
           return {
             id: todo.id,
@@ -28,7 +29,7 @@ export class TodoRepositoryImpl {
             description: todo.description,
           } as Todo
         });
-        return err ? reject(err.message) : resolve(todos);
+        return resolve(todos);
       });
     });
   }
@@ -63,7 +64,7 @@ export class TodoRepositoryImpl {
     const sql = 'insert into todos set ?';
     return new Promise<string>((resolve, reject) => { 
       this.connection.query(sql, todo, (err, result) => {
-        return err ? reject(err.message) : resolve(result.id);
+        return err ? reject(err.message) : resolve(result.insertedId);
       });
     });
   }
