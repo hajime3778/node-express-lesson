@@ -38,32 +38,44 @@ export class TodoController {
     // todo1件を作成する
     this.router.post('/todos', async (req: Request, res: Response) => { 
       const todo: Todo = req.body;
-      const result = await this.todoService.create(todo).catch((err: string) => { 
-        res.status(500).send(err);
-        return;
-      });
-      console.log(result);
+      const result = await this.todoService.create(todo)
+        .catch((err: string) => {
+          res.status(500).send(err);
+          return;
+        });
       res.status(201).json(result);
     });
 
     // todo1件を更新する
     this.router.put('/todos/:id', async (req: Request, res: Response) => { 
-      const todo: Todo = { id: parseInt(req.params.id), title: req.body.title, description: req.body.description };
-      await this.todoService.update(todo).catch((err: string) => { 
-        res.status(500).send(err);
-        return;
-      });
+      const todo: Todo = {
+        id: parseInt(req.params?.id),
+        title: req.body?.title,
+        description: req.body?.description
+      };
+      await this.todoService.update(todo)
+        .catch((err: string) => { 
+          res.status(500).send(err);
+          return;
+        });
       res.status(200).send();
     });
 
     // todo1件を削除する
     this.router.delete('/todos/:id', async (req: Request, res: Response) => { 
       const id: number = parseInt(req.params.id);
-      await this.todoService.delete(id).catch((err: string) => { 
-        res.status(500).send(err);
-        return;
-      });
-      res.status(204).send();
+      await this.todoService.delete(id)
+        .then(() => { 
+          console.log('delete success');
+          res.status(204).send();
+          return;
+        })
+        .catch((err: string) => { 
+          console.log('delete error');
+          res.status(500).send(err);
+          return;
+        });
+      
     });
   }
 }
