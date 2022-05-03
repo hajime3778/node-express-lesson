@@ -8,7 +8,7 @@ import { Todo } from "./model/todo";
 async function main() {
   // envファイル読み込み
   dotenv.config();
-  const { MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASS, MYSQL_DB, PORT, SECRET_KEY } = process.env;
+  const { MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASS, MYSQL_DB, PORT } = process.env;
 
   const app: Express = express();
   app.use(express.json());
