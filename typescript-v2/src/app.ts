@@ -3,6 +3,7 @@ import cors from "cors";
 import { AddressInfo } from "net";
 import * as dotenv from "dotenv";
 import mysql, { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { Todo } from "./model/todo";
 
 async function main() {
   // envファイル読み込み
@@ -38,7 +39,7 @@ async function main() {
 
   app.get("/", async (req: express.Request, res: express.Response) => {
     const sql = "select * from todos";
-    const [rows] = await connection.execute<any[] & RowDataPacket[]>(sql);
+    const [rows] = await connection.execute<Todo[] & RowDataPacket[]>(sql);
     res.json(rows);
   });
 }
