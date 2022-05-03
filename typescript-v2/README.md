@@ -7,7 +7,7 @@ npm install
 ```
 
 ## .env ファイル作成(ローカル用)
-
+プロジェクトフォルダ直下に、下記内容の.envファイルを作成します
 ```
 PORT=4000
 MYSQL_HOST=localhost
