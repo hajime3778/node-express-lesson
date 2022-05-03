@@ -21,7 +21,6 @@ services:
       - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_ROOT_PASSWORD: rootPassword
       MYSQL_DATABASE: todo_lesson
       MYSQL_USER: user
@@ -30,6 +29,6 @@ services:
     ports:
       - 3306:3306
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "-uuser", "-ppassword", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
