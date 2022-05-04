@@ -19,7 +19,7 @@ export class TodoRepository implements ITodoRepository {
       }
       return rows;
     } catch (error) {
-      return new SqlError(`Todo.findAll() ERROR: ${error}`);
+      return new SqlError(`TodoRepository.findAll() ERROR: ${error}`);
     }
   }
 
@@ -32,19 +32,39 @@ export class TodoRepository implements ITodoRepository {
       }
       return rows;
     } catch (error) {
-      return new SqlError(`Todo.getById() ERROR: ${error}`);
+      return new SqlError(`TodoRepository.getById() ERROR: ${error}`);
     }
   }
 
   public async create(todo: Todo): Promise<number | Error> {
-    throw new Error("Method not implemented.");
+    try {
+      const sql = `
+        insert into todos(title,description) VALUES(?,?)
+      `;
+      const [result] = await this.connection.query<ResultSetHeader>(sql, [todo.title, todo.description]);
+      return result.insertId;
+    } catch (error) {
+      return new SqlError(`TodoRepository.create() ERROR: ${error}`);
+    }
   }
 
   public async update(id: number, todo: Todo): Promise<void | Error> {
-    throw new Error("Method not implemented.");
+    try {
+      const sql = `
+        update todos set title = ?, description = ?
+        where id = ?`;
+      await this.connection.query<ResultSetHeader>(sql, [todo.title, todo.description, id]);
+    } catch (error) {
+      return new SqlError(`TodoRepository.update() ERROR: ${error}`);
+    }
   }
 
   public async delete(id: number): Promise<void | Error> {
-    throw new Error("Method not implemented.");
+    try {
+      const sql = `delete from todos where id = ?`;
+      await this.connection.query<ResultSetHeader>(sql, id);
+    } catch (error) {
+      return new SqlError(`TodoRepository.delete() ERROR: ${error}`);
+    }
   }
 }

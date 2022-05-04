@@ -6,6 +6,7 @@ import mysql, { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { Todo } from "./model/todo";
 import { TodoRepository } from "./repository/todo/todoRepository";
 import { NotFoundDataError, SqlError } from "./utils/error";
+import { TodoService } from "./services/todo/todoService";
 
 async function main() {
   // envファイル読み込み
@@ -39,24 +40,76 @@ async function main() {
     database: MYSQL_DB as string,
   });
 
-  const repository = new TodoRepository(connection);
+  const todoRepository = new TodoRepository(connection);
+  const todoService = new TodoService(todoRepository);
 
   app.get("/api/todos", async (req: express.Request, res: express.Response) => {
-    const sql = "select * from todos";
-    const [rows] = await connection.execute<Todo[] & RowDataPacket[]>(sql);
-    res.json(rows);
+    const result = await todoService.findAll();
+    if (result instanceof Error) {
+      res.status(500).json(result.message);
+      return;
+    }
+
+    res.status(200).json(result);
   });
 
   app.get("/api/todos/:id", async (req: express.Request, res: express.Response) => {
     const id = parseInt(req.params.id);
-    const result = await repository.getById(id);
+    const result = await todoService.getById(id);
 
-    if (result instanceof Error) {
-      res.json(result.message);
+    if (result instanceof NotFoundDataError) {
+      res.status(404).json(result.message);
       return;
     }
 
-    res.json(result);
+    if (result instanceof Error) {
+      res.status(500).json(result.message);
+      return;
+    }
+
+    res.status(200).json(result);
+  });
+
+  app.post("/api/todos", async (req: express.Request, res: express.Response) => {
+    const todo: Todo = req.body;
+    const result = await todoService.create(todo);
+
+    if (result instanceof Error) {
+      res.status(500).json(result.message);
+      return;
+    }
+
+    res.status(201).json(result);
+  });
+
+  app.put("/api/todos/:id", async (req: express.Request, res: express.Response) => {
+    const id = parseInt(req.params.id);
+    const todo: Todo = req.body;
+    const result = await todoService.update(id, todo);
+
+    if (result instanceof NotFoundDataError) {
+      res.status(404).json(result.message);
+      return;
+    }
+
+    if (result instanceof Error) {
+      res.status(500).json(result.message);
+      return;
+    }
+
+    res.status(200).json(result);
+  });
+
+  app.delete("/api/todos/:id", async (req: express.Request, res: express.Response) => {
+    const id = parseInt(req.params.id);
+    const result = await todoService.delete(id);
+
+    if (result instanceof Error) {
+      res.status(500).json(result.message);
+      return;
+    }
+
+    res.status(204).json(result);
   });
 }
 
