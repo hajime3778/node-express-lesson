@@ -1,12 +1,11 @@
-import express, { Express, Request, Response, NextFunction } from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import { AddressInfo } from "net";
 import * as dotenv from "dotenv";
-import mysql, { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Todo } from "./model/todo";
+import mysql from "mysql2/promise";
 import { TodoRepository } from "./repository/todo/todoRepository";
-import { NotFoundDataError, SqlError } from "./utils/error";
 import { TodoService } from "./services/todo/todoService";
+import { TodoController } from "./controllers/todo/todoController";
 
 async function main() {
   // envファイル読み込み
@@ -32,6 +31,7 @@ async function main() {
     console.log("Node.js is listening to PORT:" + address.port);
   });
 
+  // DB Connection
   const connection = await mysql.createConnection({
     host: MYSQL_HOST as string,
     port: parseInt(MYSQL_PORT as string),
@@ -40,77 +40,11 @@ async function main() {
     database: MYSQL_DB as string,
   });
 
+  // Todo API
   const todoRepository = new TodoRepository(connection);
   const todoService = new TodoService(todoRepository);
-
-  app.get("/api/todos", async (req: express.Request, res: express.Response) => {
-    const result = await todoService.findAll();
-    if (result instanceof Error) {
-      res.status(500).json(result.message);
-      return;
-    }
-
-    res.status(200).json(result);
-  });
-
-  app.get("/api/todos/:id", async (req: express.Request, res: express.Response) => {
-    const id = parseInt(req.params.id);
-    const result = await todoService.getById(id);
-
-    if (result instanceof NotFoundDataError) {
-      res.status(404).json(result.message);
-      return;
-    }
-
-    if (result instanceof Error) {
-      res.status(500).json(result.message);
-      return;
-    }
-
-    res.status(200).json(result);
-  });
-
-  app.post("/api/todos", async (req: express.Request, res: express.Response) => {
-    const todo: Todo = req.body;
-    const result = await todoService.create(todo);
-
-    if (result instanceof Error) {
-      res.status(500).json(result.message);
-      return;
-    }
-
-    res.status(201).json(result);
-  });
-
-  app.put("/api/todos/:id", async (req: express.Request, res: express.Response) => {
-    const id = parseInt(req.params.id);
-    const todo: Todo = req.body;
-    const result = await todoService.update(id, todo);
-
-    if (result instanceof NotFoundDataError) {
-      res.status(404).json(result.message);
-      return;
-    }
-
-    if (result instanceof Error) {
-      res.status(500).json(result.message);
-      return;
-    }
-
-    res.status(200).json(result);
-  });
-
-  app.delete("/api/todos/:id", async (req: express.Request, res: express.Response) => {
-    const id = parseInt(req.params.id);
-    const result = await todoService.delete(id);
-
-    if (result instanceof Error) {
-      res.status(500).json(result.message);
-      return;
-    }
-
-    res.status(204).json(result);
-  });
+  const todoController = new TodoController(todoService);
+  app.use("/api/", todoController.router);
 }
 
 main();
