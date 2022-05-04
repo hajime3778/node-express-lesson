@@ -12,7 +12,7 @@ export class TodoController {
     this.router = Router();
 
     this.router.get("/todos", async (req: Request, res: Response) => {
-      const result = await todoService.findAll();
+      const result = await this.todoService.findAll();
       if (result instanceof Error) {
         res.status(500).json(result.message);
         return;
@@ -22,7 +22,7 @@ export class TodoController {
 
     this.router.get("/todos/:id", async (req: Request, res: Response) => {
       const id = parseInt(req.params.id);
-      const result = await todoService.getById(id);
+      const result = await this.todoService.getById(id);
 
       if (result instanceof NotFoundDataError) {
         res.status(404).json(result.message);
@@ -39,7 +39,7 @@ export class TodoController {
 
     this.router.post("/todos", async (req: Request, res: Response) => {
       const todo: Todo = req.body;
-      const result = await todoService.create(todo);
+      const result = await this.todoService.create(todo);
 
       if (result instanceof Error) {
         res.status(500).json(result.message);
@@ -52,7 +52,7 @@ export class TodoController {
     this.router.put("/todos/:id", async (req: Request, res: Response) => {
       const id = parseInt(req.params.id);
       const todo: Todo = req.body;
-      const result = await todoService.update(id, todo);
+      const result = await this.todoService.update(id, todo);
 
       if (result instanceof NotFoundDataError) {
         res.status(404).json(result.message);
@@ -69,7 +69,7 @@ export class TodoController {
 
     this.router.delete("/todos/:id", async (req: Request, res: Response) => {
       const id = parseInt(req.params.id);
-      const result = await todoService.delete(id);
+      const result = await this.todoService.delete(id);
 
       if (result instanceof Error) {
         res.status(500).json(result.message);
