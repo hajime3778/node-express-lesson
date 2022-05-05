@@ -165,7 +165,7 @@ describe("TodoService", () => {
   });
 
   describe("update", () => {
-    it("should return noerror", async () => {
+    it("should return no errors", async () => {
       const mockGetByIdResult: Todo = {
         title: "title",
         description: "description",
@@ -240,7 +240,7 @@ describe("TodoService", () => {
   });
 
   describe("delete", () => {
-    it("should return noerror", async () => {
+    it("should return no errors", async () => {
       let mockRepository = createMockRepository();
       mockRepository.delete = jest.fn(() => new Promise<void | Error>((resolve) => resolve()));
       const service = new TodoService(mockRepository);

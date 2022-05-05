@@ -28,9 +28,9 @@ export class TodoRepository implements ITodoRepository {
       const sql = "select * from todos where id = ?";
       const [rows] = await this.connection.execute<Todo & RowDataPacket[]>(sql, [id]);
       if (rows.length === 0) {
-        return new NotFoundDataError(`対象のデータが見つかりませんでした`);
+        return new NotFoundDataError(`not exists target todo`);
       }
-      return rows;
+      return rows[0] as Todo;
     } catch (error) {
       return new SqlError(`TodoRepository.getById() ERROR: ${error}`);
     }
@@ -39,7 +39,7 @@ export class TodoRepository implements ITodoRepository {
   public async create(todo: Todo): Promise<number | Error> {
     try {
       const sql = `
-        insert into todos(title,description) VALUES(?,?)
+        insert into todos(title,description) values(?,?)
       `;
       const [result] = await this.connection.query<ResultSetHeader>(sql, [todo.title, todo.description]);
       return result.insertId;
