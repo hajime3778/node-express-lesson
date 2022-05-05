@@ -10,7 +10,7 @@
     "start": "node dist/src/app.js",
     "build": "tsc -p . ",
     "dev": "nodemon src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest tests --coverage"
   },
   "author": "",
   "license": "ISC",
