@@ -9,9 +9,12 @@ FROM node:16
 WORKDIR /usr/src/app
 EXPOSE 4000
 
-RUN mkdir dist node_modules
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install --production
+
+RUN mkdir dist
 COPY .env ./
 COPY --from=builder /usr/src/app/dist/ /usr/src/app/dist
-COPY --from=builder /usr/src/app/node_modules/ /usr/src/app/node_modules
 
 CMD ["node", "dist/src/app.js"]

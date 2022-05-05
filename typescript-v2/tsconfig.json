@@ -15,12 +15,10 @@
   },
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts",
-    ".eslintrc.js",
-    "jest.config.js"
   ],
   "exclude": [
     "node_modules",
+    "tests",
     "dist"
   ]
 }

@@ -2,9 +2,8 @@
   "name": "todo-lesson",
   "version": "1.0.0",
   "engines": {
-    "node": "16.x"
+    "node": ">=16.0.0"
   },
-  "description": "",
   "main": "app.ts",
   "scripts": {
     "start": "node dist/src/app.js",
@@ -12,8 +11,8 @@
     "dev": "nodemon src/app.ts",
     "test": "jest tests --coverage"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "hajime takeuchi",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
