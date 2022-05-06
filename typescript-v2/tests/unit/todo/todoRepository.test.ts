@@ -1,8 +1,8 @@
 import { Connection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { Todo } from "../../src/model/todo";
-import { TodoRepository } from "../../src/repository/todo/todoRepository";
-import { NotFoundDataError } from "../../src/utils/error";
-import { createTestDBConnection, resetTestDB } from "../utils/resetTestDB";
+import { Todo } from "../../../src/model/todo";
+import { TodoRepository } from "../../../src/repository/todo/todoRepository";
+import { NotFoundDataError } from "../../../src/utils/error";
+import { createTestDBConnection, resetTestDB } from "../../utils/resetTestDB";
 
 let connection: Connection;
 

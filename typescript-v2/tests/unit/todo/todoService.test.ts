@@ -1,7 +1,7 @@
-import { Todo } from "../../src/model/todo";
-import { ITodoRepository } from "../../src/repository/todo/interface";
-import { TodoService } from "../../src/services/todo/todoService";
-import { NotFoundDataError } from "../../src/utils/error";
+import { Todo } from "../../../src/model/todo";
+import { ITodoRepository } from "../../../src/repository/todo/interface";
+import { TodoService } from "../../../src/services/todo/todoService";
+import { NotFoundDataError } from "../../../src/utils/error";
 
 function createMockRepository(): ITodoRepository {
   const mockRepository: ITodoRepository = {
