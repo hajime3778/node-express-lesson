@@ -41,6 +41,9 @@ async function main() {
   const todoService = new TodoService(todoRepository);
   const todoController = new TodoController(todoService);
   app.use("/api/", todoController.router);
+
+  // auth
+  app;
 }
 
 main();

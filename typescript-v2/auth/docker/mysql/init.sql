@@ -1,3 +1,24 @@
+-- users
+CREATE TABLE `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `email` varchar(100),
+  `password` varchar(20),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `idx_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `users` (
+	`name`,
+  `email`,
+  `password`
+) VALUES
+	('田中太郎', 'tarou@example.com', `password`),
+	('山田花子', 'hanako@example.com', `password`)
+;
+
 -- todos
 CREATE TABLE `todos` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
