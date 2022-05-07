@@ -1,8 +1,9 @@
-import { Connection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { Connection, RowDataPacket } from "mysql2/promise";
 import { Todo } from "../../../src/model/todo";
 import { TodoRepository } from "../../../src/repository/todo/todoRepository";
 import { NotFoundDataError } from "../../../src/utils/error";
 import { createDBConnection } from "../../utils/Database";
+import { createTodoTestData } from "../../utils/testData/createTodoTestData";
 
 let connection: Connection;
 
@@ -15,29 +16,11 @@ afterEach(async () => {
   await connection.end();
 });
 
-async function createTestTodoData(num: number): Promise<Todo[]> {
-  const todoList: Todo[] = [];
-
-  for (let index = 0; index < num; index++) {
-    const todo: Todo = {
-      title: `title_${index}`,
-      description: `description_${index}`,
-    };
-    const query = `insert into todos(title,description) values("${todo.title}","${todo.description}")`;
-    const [result] = await connection.query<ResultSetHeader>(query);
-
-    todo.id = result.insertId;
-    todoList.push(todo);
-  }
-
-  return todoList;
-}
-
 describe("TodoRepository", () => {
   describe("findAll", () => {
     it("shoud return 5 todo", async () => {
       const repository = new TodoRepository(connection);
-      const todoList = await createTestTodoData(5);
+      const createdTodoList = await createTodoTestData(connection, 5);
 
       const result = await repository.findAll();
       if (result instanceof Error) {
@@ -45,7 +28,7 @@ describe("TodoRepository", () => {
       }
 
       for (const todo of result) {
-        const expectTodo = todoList.filter((t) => t.id === todo.id)[0];
+        const expectTodo = createdTodoList.filter((t) => t.id === todo.id)[0];
         expect(todo.id).toBe(expectTodo.id);
         expect(todo.title).toBe(expectTodo.title);
         expect(todo.description).toBe(expectTodo.description);
@@ -65,7 +48,7 @@ describe("TodoRepository", () => {
   describe("getById", () => {
     it("shoud return todo", async () => {
       const repository = new TodoRepository(connection);
-      const [todo] = await createTestTodoData(1);
+      const [todo] = await createTodoTestData(connection, 1);
 
       const result = await repository.getById(todo.id!);
       if (result instanceof Error) {
@@ -113,7 +96,7 @@ describe("TodoRepository", () => {
   describe("update", () => {
     it("shoud return no errors", async () => {
       const repository = new TodoRepository(connection);
-      const [createdTodo] = await createTestTodoData(1);
+      const [createdTodo] = await createTodoTestData(connection, 1);
       const createdId = createdTodo.id!;
 
       const todo: Todo = {
@@ -139,7 +122,7 @@ describe("TodoRepository", () => {
   describe("delete", () => {
     it("shoud return no errors", async () => {
       const repository = new TodoRepository(connection);
-      const [createdTodo] = await createTestTodoData(1);
+      const [createdTodo] = await createTodoTestData(connection, 1);
       const createdId = createdTodo.id!;
 
       const deleteResult = await repository.delete(createdId);
