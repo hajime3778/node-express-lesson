@@ -9,7 +9,7 @@ export class AuthService implements IAuthService {
     this.userRepository = userRepository;
   }
 
-  public async signIn(email: string): Promise<User | Error> {
+  public async signIn(email: string, password: string): Promise<User | Error> {
     const user = await this.userRepository.getByEmail(email);
     return user;
   }

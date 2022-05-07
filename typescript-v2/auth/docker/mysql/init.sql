@@ -2,8 +2,8 @@
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '',
-  `email` varchar(100),
-  `password` varchar(20),
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `password` varchar(20) NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -15,8 +15,8 @@ INSERT INTO `users` (
   `email`,
   `password`
 ) VALUES
-	('田中太郎', 'tarou@example.com', `password`),
-	('山田花子', 'hanako@example.com', `password`)
+	('田中太郎', 'tarou@example.com', 'password'),
+	('山田花子', 'hanako@example.com', 'password')
 ;
 
 -- todos

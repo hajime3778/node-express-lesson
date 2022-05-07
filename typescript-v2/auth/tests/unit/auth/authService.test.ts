@@ -1,7 +1,6 @@
 import { User } from "../../../src/model/user";
 import { IUserRepository } from "../../../src/repository/user/interface";
 import { AuthService } from "../../../src/services/auth/authService";
-import { NotFoundDataError } from "../../../src/utils/error";
 
 function createMockRepository(): IUserRepository {
   const mockRepository: IUserRepository = {
@@ -33,7 +32,7 @@ describe("UserService", () => {
       mockRepository.getByEmail = jest.fn(() => new Promise<User | Error>((resolve) => resolve(mockResult)));
       const service = new AuthService(mockRepository);
 
-      const result = await service.signIn("email");
+      const result = await service.signIn("email", "password");
 
       if (result instanceof Error) {
         throw new Error("Test failed because an error has occurred.");
@@ -53,7 +52,7 @@ describe("UserService", () => {
       mockRepository.getByEmail = jest.fn(() => new Promise<User | Error>((resolve) => resolve(mockResult)));
       const service = new AuthService(mockRepository);
 
-      const result = await service.signIn("email");
+      const result = await service.signIn("email", "password");
 
       if (!(result instanceof Error)) {
         throw new Error("Test failed because no error occurred");

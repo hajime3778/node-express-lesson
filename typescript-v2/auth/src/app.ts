@@ -6,6 +6,9 @@ import { createConnection } from "mysql2/promise";
 import { TodoRepository } from "./repository/todo/todoRepository";
 import { TodoService } from "./services/todo/todoService";
 import { TodoController } from "./controllers/todo/todoController";
+import { AuthController } from "./controllers/auth/authController";
+import { UserRepository } from "./repository/user/userRepository";
+import { AuthService } from "./services/auth/authService";
 
 async function main() {
   dotenv.config();
@@ -42,8 +45,11 @@ async function main() {
   const todoController = new TodoController(todoService);
   app.use("/api/", todoController.router);
 
-  // auth
-  app;
+  // auth API
+  const userRepository = new UserRepository(connection);
+  const authService = new AuthService(userRepository);
+  const authController = new AuthController(authService);
+  app.use("/api/", authController.router);
 }
 
 main();
