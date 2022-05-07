@@ -1,7 +1,9 @@
 import axios from "axios";
+import { compare } from "bcrypt";
 import * as dotenv from "dotenv";
 import { Connection, RowDataPacket } from "mysql2/promise";
 import { User } from "../../src/model/user";
+import { verifyAccessToken } from "../../src/utils/token";
 import { createDBConnection } from "../utils/Database";
 import { createUserTestData } from "../utils/testData/createUserTestData";
 
@@ -44,25 +46,33 @@ describe("AuthApi", () => {
       expect(response.status).toBe(404);
     });
   });
-  describe("create", () => {
-    it("should return 201 status", async () => {
+  describe("signup", () => {
+    it("should return accesstoken", async () => {
       const request: User = {
         name: "name",
         email: "email",
         password: "password",
       };
-      const response = await axios.post<number>("/api/auth/signup", request);
-      const createdId = response.data;
+      const response = await axios.post<string>("/api/auth/signup", request);
+      const token = response.data;
 
-      const query = `select * from users where id = ${createdId}`;
+      const payload = verifyAccessToken(token);
+
+      if (payload instanceof Error) {
+        throw new Error("Test failed because an error has occurred.");
+      }
+
+      const query = `select * from users where id = ${payload.userId}`;
       const [rows] = await connection.query<User & RowDataPacket[]>(query);
       const queryResult = rows[0] as User;
 
-      expect(response.status).toBe(201);
-      expect(queryResult.id).toBe(createdId);
-      expect(queryResult.name).toBe(request.name);
-      expect(queryResult.email).toBe(request.email);
-      expect(queryResult.password).toBe(request.password);
+      const isMatchPassword = await compare(request.password, queryResult.password);
+
+      expect(response.status).toBe(200);
+      expect(queryResult.id).toBe(payload.userId);
+      expect(queryResult.name).toBe(payload.name);
+      expect(queryResult.email).toBe(payload.email);
+      expect(isMatchPassword).toBeTruthy();
     });
   });
 });

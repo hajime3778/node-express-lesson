@@ -37,7 +37,7 @@ export class AuthController {
         return;
       }
 
-      res.status(201).json(result);
+      res.status(200).json(result);
     });
   }
 }

@@ -1,6 +1,8 @@
 import { User } from "../../../src/model/user";
 import { IUserRepository } from "../../../src/repository/user/interface";
 import { AuthService } from "../../../src/services/auth/authService";
+import * as jwt from "jsonwebtoken";
+import { AccessTokenPayload, verifyAccessToken } from "../../../src/utils/token";
 
 function createMockRepository(): IUserRepository {
   const mockRepository: IUserRepository = {
@@ -63,7 +65,7 @@ describe("UserService", () => {
   });
 
   describe("signUp", () => {
-    it("should return createdId 1", async () => {
+    it("should return accesstoken", async () => {
       const mockResult: number = 1;
 
       let mockRepository = createMockRepository();
@@ -82,7 +84,14 @@ describe("UserService", () => {
         throw new Error("Test failed because an error has occurred.");
       }
 
-      expect(result).toBe(mockResult);
+      const payload = verifyAccessToken(result);
+      if (payload instanceof Error) {
+        throw new Error("Test failed because an error has occurred.");
+      }
+
+      expect(payload.userId).toBe(createUser.id);
+      expect(payload.name).toBe(createUser.name);
+      expect(payload.email).toBe(createUser.email);
     });
 
     it("should return repository error", async () => {

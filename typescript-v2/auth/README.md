@@ -17,6 +17,7 @@ MYSQL_PORT=3306
 MYSQL_USER=user
 MYSQL_PASS=password
 MYSQL_DB=todo_lesson
+SECRET_KEY=example_key
 ```
 
 コンテナでアプリを起動する場合、MYSQL_HOST を以下のように変更してください。
