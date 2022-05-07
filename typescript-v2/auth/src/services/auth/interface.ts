@@ -1,0 +1,6 @@
+import { User } from "../../model/user";
+
+export interface IAuthService {
+  signIn(email: string): Promise<User | Error>;
+  signUp(user: User): Promise<number | Error>;
+}
