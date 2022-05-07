@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as dotenv from "dotenv";
-import { Connection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { Connection, RowDataPacket } from "mysql2/promise";
 import { Todo } from "../../src/model/todo";
 import { createDBConnection } from "../utils/Database";
 import { createTodoTestData } from "../utils/testData/createTodoTestData";
