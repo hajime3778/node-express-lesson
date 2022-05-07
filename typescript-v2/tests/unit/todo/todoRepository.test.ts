@@ -2,16 +2,12 @@ import { Connection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { Todo } from "../../../src/model/todo";
 import { TodoRepository } from "../../../src/repository/todo/todoRepository";
 import { NotFoundDataError } from "../../../src/utils/error";
-import { createTestDBConnection, resetTestDB } from "../../utils/resetTestDB";
+import { createDBConnection } from "../../utils/Database";
 
 let connection: Connection;
 
-beforeAll(async () => {
-  await resetTestDB();
-});
-
 beforeEach(async () => {
-  connection = await createTestDBConnection();
+  connection = await createDBConnection();
   connection.query(`delete from todos`);
 });
 

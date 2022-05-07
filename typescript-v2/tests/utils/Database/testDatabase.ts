@@ -1,6 +1,10 @@
 import { createConnection, Connection } from "mysql2/promise";
 import * as fs from "fs";
 
+/*
+  このファイルに定義しているのは、テスト専用データベースを使用する場合の関数。
+  興味でやってみたらできたので残していますが、勉強会でここまでやる必要はないので無視してください。
+*/
 export async function resetTestDB() {
   const connection = await createConnection({
     host: "localhost",
