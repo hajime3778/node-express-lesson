@@ -1,3 +1,4 @@
+import { hash } from "bcrypt";
 import { Connection, ResultSetHeader } from "mysql2/promise";
 import { User } from "../../../src/model/user";
 
@@ -10,7 +11,8 @@ export async function createUserTestData(connection: Connection, num: number): P
       email: `email_${index}`,
       password: `password_${index}`,
     };
-    const query = `insert into users(name,email,password) values("${user.name}","${user.email}","${user.password}")`;
+    const hashedPassword: string = await hash(user.password, 10);
+    const query = `insert into users(name,email,password) values("${user.name}","${user.email}","${hashedPassword}")`;
     const [result] = await connection.query<ResultSetHeader>(query);
 
     user.id = result.insertId;

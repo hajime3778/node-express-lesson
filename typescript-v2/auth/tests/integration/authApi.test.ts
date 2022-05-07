@@ -28,13 +28,27 @@ describe("AuthApi", () => {
   describe("signIn", () => {
     it("should return 200 status", async () => {
       const [expectUser] = await createUserTestData(connection, 1);
-      const response = await axios.post<User>("/api/auth/signin", expectUser);
+      const response = await axios.post<string>("/api/auth/signin", expectUser);
+      if (response.status !== 200) {
+        throw new Error("Test failed because an error has occurred.");
+      }
+      const token = response.data;
+
+      const payload = verifyAccessToken(token);
+      if (payload instanceof Error) {
+        throw new Error("Test failed because an error has occurred.");
+      }
 
       expect(response.status).toBe(200);
-      expect(response.data.id).toBe(expectUser.id);
-      expect(response.data.name).toBe(expectUser.name);
-      expect(response.data.email).toBe(expectUser.email);
-      expect(response.data.password).toBe(expectUser.password);
+      expect(payload.userId).toBe(expectUser.id);
+      expect(payload.name).toBe(expectUser.name);
+      expect(payload.email).toBe(expectUser.email);
+    });
+    it("should return 401 status", async () => {
+      const [expectUser] = await createUserTestData(connection, 1);
+      expectUser.password = "mismatch password";
+      const response = await axios.post<string>("/api/auth/signin", expectUser);
+      expect(response.status).toBe(401);
     });
     it("should return 404 status", async () => {
       const notExistsUser: User = {
@@ -42,7 +56,7 @@ describe("AuthApi", () => {
         email: "email",
         password: "password",
       };
-      const response = await axios.post<User>("/api/auth/signin", notExistsUser);
+      const response = await axios.post<string>("/api/auth/signin", notExistsUser);
       expect(response.status).toBe(404);
     });
   });
@@ -54,10 +68,12 @@ describe("AuthApi", () => {
         password: "password",
       };
       const response = await axios.post<string>("/api/auth/signup", request);
+      if (response.status !== 200) {
+        throw new Error("Test failed because an error has occurred.");
+      }
       const token = response.data;
 
       const payload = verifyAccessToken(token);
-
       if (payload instanceof Error) {
         throw new Error("Test failed because an error has occurred.");
       }

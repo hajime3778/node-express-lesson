@@ -10,3 +10,4 @@ class BaseError extends Error {
 
 export class NotFoundDataError extends BaseError {}
 export class SqlError extends BaseError {}
+export class MismatchEmailOrPassword extends BaseError {}

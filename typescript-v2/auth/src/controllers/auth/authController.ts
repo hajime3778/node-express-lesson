@@ -1,6 +1,6 @@
 import { IAuthService } from "../../services/auth/interface";
 import { Request, Response, Router } from "express";
-import { NotFoundDataError } from "../../utils/error";
+import { MismatchEmailOrPassword, NotFoundDataError } from "../../utils/error";
 import { User } from "../../model/user";
 
 export class AuthController {
@@ -17,6 +17,11 @@ export class AuthController {
 
       if (result instanceof NotFoundDataError) {
         res.status(404).json(result.message);
+        return;
+      }
+
+      if (result instanceof MismatchEmailOrPassword) {
+        res.status(401).json(result.message);
         return;
       }
 
