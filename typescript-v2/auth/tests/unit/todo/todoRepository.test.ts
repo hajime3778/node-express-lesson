@@ -9,7 +9,7 @@ let connection: Connection;
 
 beforeEach(async () => {
   connection = await createDBConnection();
-  connection.query(`delete from todos`);
+  await connection.query(`delete from todos`);
 });
 
 afterEach(async () => {
@@ -26,6 +26,8 @@ describe("TodoRepository", () => {
       if (result instanceof Error) {
         throw new Error(`Test failed because an error has occurred: ${result.message}`);
       }
+
+      expect(result.length === 5).toBeTruthy;
 
       for (const todo of result) {
         const expectTodo = createdTodoList.filter((t) => t.id === todo.id)[0];

@@ -1,7 +1,5 @@
 import { compare, hash } from "bcrypt";
 import { User } from "../../model/user";
-import * as dotenv from "dotenv";
-import * as jwt from "jsonwebtoken";
 import { AccessTokenPayload, generateAccessToken } from "../../utils/token";
 import { IUserRepository } from "../../repository/user/interface";
 import { IAuthService } from "./interface";

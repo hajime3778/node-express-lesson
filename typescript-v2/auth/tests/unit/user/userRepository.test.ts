@@ -9,7 +9,7 @@ let connection: Connection;
 
 beforeEach(async () => {
   connection = await createDBConnection();
-  connection.query(`delete from users`);
+  await connection.query(`delete from users`);
 });
 
 afterEach(async () => {

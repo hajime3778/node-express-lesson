@@ -15,7 +15,7 @@ let connection: Connection;
 
 beforeEach(async () => {
   connection = await createDBConnection();
-  connection.query(`delete from todos`);
+  await connection.query(`delete from todos`);
 });
 
 afterEach(async () => {

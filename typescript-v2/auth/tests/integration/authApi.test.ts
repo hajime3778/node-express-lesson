@@ -5,7 +5,7 @@ import { Connection, RowDataPacket } from "mysql2/promise";
 import { User } from "../../src/model/user";
 import { verifyAccessToken } from "../../src/utils/token";
 import { createDBConnection } from "../utils/Database";
-import { createUserTestData } from "../utils/testData/createUserTestData";
+import { createUserHashedPasswordTestData } from "../utils/testData/createUserTestData";
 
 dotenv.config();
 const { PORT } = process.env;
@@ -17,7 +17,7 @@ let connection: Connection;
 
 beforeEach(async () => {
   connection = await createDBConnection();
-  connection.query(`delete from users`);
+  await connection.query(`delete from users`);
 });
 
 afterEach(async () => {
@@ -27,7 +27,7 @@ afterEach(async () => {
 describe("AuthApi", () => {
   describe("signIn", () => {
     it("should return 200 status", async () => {
-      const [expectUser] = await createUserTestData(connection, 1);
+      const [expectUser] = await createUserHashedPasswordTestData(connection, 1);
       const response = await axios.post<string>("/api/auth/signin", expectUser);
       if (response.status !== 200) {
         throw new Error("Test failed because an error has occurred.");
@@ -45,7 +45,7 @@ describe("AuthApi", () => {
       expect(payload.email).toBe(expectUser.email);
     });
     it("should return 401 status", async () => {
-      const [expectUser] = await createUserTestData(connection, 1);
+      const [expectUser] = await createUserHashedPasswordTestData(connection, 1);
       expectUser.password = "mismatch password";
       const response = await axios.post<string>("/api/auth/signin", expectUser);
       expect(response.status).toBe(401);
