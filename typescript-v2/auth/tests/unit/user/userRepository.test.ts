@@ -13,6 +13,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  await connection.query(`delete from users`);
   await connection.end();
 });
 
