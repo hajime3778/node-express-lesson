@@ -13,7 +13,6 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await connection.query(`delete from todos`);
   await connection.end();
 });
 
