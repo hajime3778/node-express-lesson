@@ -1,6 +1,7 @@
 import { IAuthService } from "../../services/auth/interface";
 import { Request, Response, Router } from "express";
 import { MismatchEmailOrPassword, NotFoundDataError } from "../../utils/error";
+import { TOKEN_HEADER_KEY } from "../../utils/token";
 import { User } from "../../model/user";
 
 export class AuthController {
@@ -30,6 +31,7 @@ export class AuthController {
         return;
       }
 
+      res.cookie(TOKEN_HEADER_KEY, result, { httpOnly: true });
       res.status(200).json(result);
     });
 
@@ -42,6 +44,7 @@ export class AuthController {
         return;
       }
 
+      res.cookie(TOKEN_HEADER_KEY, result, { httpOnly: true });
       res.status(200).json(result);
     });
   }

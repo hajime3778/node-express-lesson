@@ -5,6 +5,8 @@ import { TokenExpiredError, JsonWebTokenError } from "./error";
 dotenv.config();
 const { SECRET_KEY } = process.env;
 
+export const TOKEN_HEADER_KEY = "todo-access-token";
+
 export type AccessTokenPayload = {
   userId: number;
   name: string;
