@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import * as jwt from "jsonwebtoken";
+import { TokenExpiredError, JsonWebTokenError } from "./error";
 
 dotenv.config();
 const { SECRET_KEY } = process.env;
@@ -23,9 +24,9 @@ export function verifyAccessToken(token: string): AccessTokenPayload | Error {
     decoded = jwt.verify(token, secretKey, { algorithms: ["HS256"] }) as AccessTokenPayload;
   } catch (e) {
     if (e instanceof jwt.TokenExpiredError) {
-      return new Error("token expired");
+      return new TokenExpiredError("token expired");
     } else if (e instanceof jwt.JsonWebTokenError) {
-      return new Error("Incorrect token.");
+      return new JsonWebTokenError("incorrect token");
     } else {
       return new Error("other errors occurred during token validation");
     }
