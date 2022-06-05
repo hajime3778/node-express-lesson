@@ -48,7 +48,7 @@ describe("UserRepository", () => {
       const repository = new UserRepository(connection);
       const [expectUser] = await createUserTestData(connection, 1);
 
-      const result = await repository.getById(expectUser.id!);
+      const result = await repository.getByEmail(expectUser.email!);
       if (result instanceof Error) {
         throw new Error(`Test failed because an error has occurred: ${result.message}`);
       }
@@ -61,7 +61,7 @@ describe("UserRepository", () => {
 
     it("shoud return notfound error", async () => {
       const repository = new UserRepository(connection);
-      const result = await repository.getById(1);
+      const result = await repository.getByEmail("email");
       if (!(result instanceof Error)) {
         throw new Error("Test failed because no error occurred");
       }
