@@ -39,9 +39,9 @@ export class TodoRepository implements ITodoRepository {
   public async create(todo: Todo): Promise<number | Error> {
     try {
       const sql = `
-        insert into todos(title,description) values(?,?)
+        insert into todos(user_id, title,description) values(?,?,?)
       `;
-      const [result] = await this.connection.query<ResultSetHeader>(sql, [todo.title, todo.description]);
+      const [result] = await this.connection.query<ResultSetHeader>(sql, [todo.userId, todo.title, todo.description]);
       return result.insertId;
     } catch (error) {
       return new SqlError(`TodoRepository.create() ERROR: ${error}`);

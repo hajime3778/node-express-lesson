@@ -25,12 +25,13 @@ function createMockRepository(): ITodoRepository {
   return mockRepository;
 }
 
-function createMockTodoList(num: number): Todo[] {
+function createMockTodoList(num: number, userId: number): Todo[] {
   const todoList: Todo[] = [];
 
   for (let index = 0; index < num; index++) {
     const todo: Todo = {
       id: index,
+      userId: userId,
       title: `title_${index}`,
       description: `description_${index}`,
     };
@@ -43,7 +44,7 @@ function createMockTodoList(num: number): Todo[] {
 describe("TodoService", () => {
   describe("findAll", () => {
     it("should return 5 todo", async () => {
-      const mockResult: Todo[] = createMockTodoList(5);
+      const mockResult: Todo[] = createMockTodoList(5, 1);
 
       let mockRepository = createMockRepository();
       mockRepository.findAll = jest.fn(() => new Promise<Todo[] | Error>((resolve) => resolve(mockResult)));
@@ -86,6 +87,7 @@ describe("TodoService", () => {
     it("should return todo", async () => {
       const mockResult: Todo = {
         id: 1,
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -130,6 +132,7 @@ describe("TodoService", () => {
       const service = new TodoService(mockRepository);
 
       const createTodo: Todo = {
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -151,6 +154,7 @@ describe("TodoService", () => {
       const service = new TodoService(mockRepository);
 
       const createTodo: Todo = {
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -167,6 +171,7 @@ describe("TodoService", () => {
   describe("update", () => {
     it("should return no errors", async () => {
       const mockGetByIdResult: Todo = {
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -178,6 +183,7 @@ describe("TodoService", () => {
       const service = new TodoService(mockRepository);
 
       const updateTodo: Todo = {
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -197,6 +203,7 @@ describe("TodoService", () => {
 
       const updateTodo: Todo = {
         id: 1,
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -213,6 +220,7 @@ describe("TodoService", () => {
     it("should return repository error", async () => {
       const mockGetByIdResult: Todo = {
         id: 1,
+        userId: 1,
         title: "title",
         description: "description",
       };
@@ -227,6 +235,7 @@ describe("TodoService", () => {
 
       const updateTodo: Todo = {
         id: 1,
+        userId: 1,
         title: "title",
         description: "description",
       };

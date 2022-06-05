@@ -4,6 +4,7 @@ import { Connection, RowDataPacket } from "mysql2/promise";
 import { Todo } from "../../src/model/todo";
 import { createDBConnection } from "../utils/Database";
 import { createTodoTestData } from "../utils/testData/createTodoTestData";
+import { createUserTestData } from "../utils/testData/createUserTestData";
 
 dotenv.config();
 const { PORT } = process.env;
@@ -16,6 +17,7 @@ let connection: Connection;
 beforeEach(async () => {
   connection = await createDBConnection();
   await connection.query(`delete from todos`);
+  await connection.query(`delete from users`);
 });
 
 afterEach(async () => {
@@ -25,7 +27,8 @@ afterEach(async () => {
 describe("TodoApi", () => {
   describe("findAll", () => {
     it("should return 5 todo and 200 status", async () => {
-      const createdTodoList = await createTodoTestData(connection, 5);
+      const [user] = await createUserTestData(connection, 1);
+      const createdTodoList = await createTodoTestData(connection, user.id!, 5);
 
       const response = await axios.get<Todo[]>("/api/todos");
 
@@ -47,7 +50,8 @@ describe("TodoApi", () => {
   });
   describe("getById", () => {
     it("should return todo and 200 status", async () => {
-      const createdTodoList = await createTodoTestData(connection, 1);
+      const [user] = await createUserTestData(connection, 1);
+      const createdTodoList = await createTodoTestData(connection, user.id!, 1);
       const expectTodo = createdTodoList[0];
       const response = await axios.get<Todo>(`/api/todos/${expectTodo.id}`);
 
@@ -64,7 +68,9 @@ describe("TodoApi", () => {
   });
   describe("create", () => {
     it("should return 201 status", async () => {
+      const [user] = await createUserTestData(connection, 1);
       const request: Todo = {
+        userId: user.id!,
         title: "title",
         description: "description",
       };
@@ -83,10 +89,12 @@ describe("TodoApi", () => {
   });
   describe("update", () => {
     it("should return 200 status", async () => {
-      const createdTodoList = await createTodoTestData(connection, 1);
+      const [user] = await createUserTestData(connection, 1);
+      const createdTodoList = await createTodoTestData(connection, user.id!, 1);
       const createdId = createdTodoList[0].id;
 
       const request: Todo = {
+        userId: user.id!,
         title: "updated title",
         description: "updated description",
       };
@@ -105,6 +113,7 @@ describe("TodoApi", () => {
     it("should return 404 status", async () => {
       const notExistsId = 1;
       const request: Todo = {
+        userId: 1,
         title: "updated title",
         description: "updated description",
       };
@@ -114,7 +123,8 @@ describe("TodoApi", () => {
   });
   describe("delete", () => {
     it("should return 204 status", async () => {
-      const createdTodoList = await createTodoTestData(connection, 1);
+      const [user] = await createUserTestData(connection, 1);
+      const createdTodoList = await createTodoTestData(connection, user.id!, 1);
       const createdId = createdTodoList[0].id;
       const response = await axios.delete(`/api/todos/${createdId}`);
 
